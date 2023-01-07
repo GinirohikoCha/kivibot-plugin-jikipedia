@@ -1,13 +1,14 @@
 {
   "name": "kivibot-plugin-jikipedia",
-  "version": "1.0.0",
+  "version": "1.0.9",
   "description": "QQ 机器人框架 KiviBot 的 小鸡词典（梗词典）插件",
   "main": "src/index.js",
   "repository": "KiviBotLab/kivibot-plugin-jikipedia",
   "homepage": "https://github.com/GinirohikoCha/kivibot-plugin-jikipedia",
   "author": "GinirohikoCha",
   "scripts": {
-    "release": "npm publish"
+    "release": "npm publish",
+    "test": "node src/test.js"
   },
   "files": [
     "src/index.js"
