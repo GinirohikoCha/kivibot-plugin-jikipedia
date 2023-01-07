@@ -1,5 +1,5 @@
 const { KiviPlugin } = require('@kivibot/core')
-const axios = require('axios');
+const axios = require('axios')
 
 const { version } = require('../package.json')
 const plugin = new KiviPlugin('Jikipedia', version)
@@ -46,42 +46,48 @@ plugin.onMounted(async bot => {
     }
 
     const phrase = raw_message
-        .replace(new RegExp(`^\\s*${config.cmdPrefix}`), '')
-        .trim()
+      .replace(new RegExp(`^\\s*${config.cmdPrefix}`), '')
+      .trim()
 
-    try {
-      const response = await axios.post(
-          'https://api.jikipedia.com/go/auto_complete',
-          {
-            phrase
-          }
-      )
+    plugin.debug(phrase)
 
-      const { data } = response
-      // 无梗
-      if (data.length === 0) {
-        await event.reply(msgs.unknownPhrase, true)
+    const request = axios.create({
+      baseURL: 'https://api.jikipedia.com/',
+      timeout: 5000,
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36 Edg/108.0.1462.54',
+        'Origin': 'https://jikipedia.com',
+        'Client': 'web',
+        'Host': 'api.jikipedia.com'
+      }
+    })
+
+    const response = await request.post('/go/auto_complete', { phrase })
+
+    const { data } = response.data
+    plugin.debug(JSON.stringify(data))
+    // 无梗
+    if (data.length === 0) {
+      await event.reply(msgs.unknownPhrase, true)
+      return
+    }
+    // process
+    if (data.length >= 1) {
+      let mainContent = data[0].entities?.[0]?.content
+      // 无释义
+      if (!mainContent) {
+        await event.reply(msgs.nullPhrase, true)
         return
       }
-      // process
-      if (data.length >= 1) {
-        let mainContent = data[0].entities?.[0].content
-        // 无释义
-        if (!mainContent) {
-          await event.reply(msgs.nullPhrase, true)
-          return
-        }
+
+      if (data.length > 1) {
         mainContent += '\n\n相关内容：'
         // 相关词
         for (let i = 1; i < data.length; i++) {
-          mainContent += data[i].word + (i = data.length - 1 ? '' : '、')
+          mainContent += data[i].word + (i === data.length - 1 ? '' : '、')
         }
         await event.reply(mainContent, true)
       }
-    } catch (err) {
-      plugin.throwPluginError(err?.message ?? err)
-
-      return event.reply(err, true)
     }
   })
 })
