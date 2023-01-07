@@ -20,7 +20,7 @@ async function test() {
     const response = await request.post(
         '/go/auto_complete',
         {
-            phrase: '淫梦'
+            phrase: '牛校出牛子'
         }
     )
 
@@ -41,11 +41,15 @@ async function test() {
             console.log(msgs.nullPhrase)
             return
         }
-        mainContent += '\n\n相关内容：'
-        // 相关词
-        for (let i = 1; i < data.length; i++) {
-            mainContent += data[i].word + (i === data.length - 1 ? '' : '、')
+
+        if (data.length > 1) {
+            mainContent += '\n\n相关内容：'
+            // 相关词
+            for (let i = 1; i < data.length; i++) {
+                mainContent += data[i].word + (i === data.length - 1 ? '' : '、')
+            }
         }
+
         console.log(mainContent)
     }
 }

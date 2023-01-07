@@ -86,8 +86,9 @@ plugin.onMounted(async bot => {
         for (let i = 1; i < data.length; i++) {
           mainContent += data[i].word + (i === data.length - 1 ? '' : '、')
         }
-        await event.reply(mainContent, true)
       }
+
+      await event.reply(mainContent, true)
     }
   })
 })
