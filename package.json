@@ -1,0 +1,31 @@
+{
+  "name": "kivibot-plugin-jikipedia",
+  "version": "1.0.0",
+  "description": "QQ 机器人框架 KiviBot 的 小鸡词典（梗词典）插件",
+  "main": "src/index.js",
+  "repository": "KiviBotLab/kivibot-plugin-jikipedia",
+  "homepage": "https://github.com/GinirohikoCha/kivibot-plugin-jikipedia",
+  "author": "GinirohikoCha",
+  "scripts": {
+    "release": "npm publish"
+  },
+  "files": [
+    "src/index.js"
+  ],
+  "keywords": [
+    "kivibot",
+    "kivibot-plugin",
+    "jikipedia",
+    "小鸡词典",
+    "meme",
+    "neta",
+    "梗"
+  ],
+  "license": "MIT",
+  "devDependencies": {
+    "@kivibot/core": "latest"
+  },
+  "dependencies": {
+    "axios": "^1.2.2"
+  }
+}
