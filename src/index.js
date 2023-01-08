@@ -102,7 +102,6 @@ plugin.onMounted(async bot => {
  * @return {*}
  */
 function addRelatedContent(data, mainContent) {
-  mainContent += '\n\n相关内容：'
   for (let i = 1; i < data.length; i++) {
     mainContent += data[i].word + (i === data.length - 1 ? '' : '、')
   }
