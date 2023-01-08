@@ -3,7 +3,7 @@
 [![npm-version](https://img.shields.io/npm/v/kivibot-plugin-jikipedia?color=ffd47a&label=kivibot-plugin-jikipedia&style=flat-square)](https://npm.im/kivibot-plugin-jikipedia)
 [![dm](https://shields.io/npm/dm/kivibot-plugin-jikipedia?color=ffd47a&style=flat-square)](https://npm.im/kivibot-plugin-jikipedia)
 
-[`KiviBot`](https://beta.kivibot.com) 的 [小鸡词典](https://jikipedia.com/) 插件，提供请求抓取提供释义和关联词汇。
+[`KiviBot`](https://beta.kivibot.com) 的 [小鸡词典](https://jikipedia.com/) 插件，提供请求抓取相关梗词释义。
 
 v1.1.0 新增恶魔鸡（emoji）翻译器
 
