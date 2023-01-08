@@ -5,8 +5,11 @@
 
 [`KiviBot`](https://beta.kivibot.com) 的 [小鸡词典](https://jikipedia.com/) 插件，提供请求抓取提供释义和关联词汇。
 
+v1.1.0 新增恶魔鸡（emoji）翻译器
+
 **特征**
 
+- [恶魔鸡（emoji）翻译器](https://jikipedia.com/activity/emoji?ref=app)
 - 支持相关词汇提示
 - 轻量级
 - 想不出了
@@ -35,4 +38,5 @@
 ```
 #鸡你太美
 #芝士雪豹
+#emoji 鸡飞蛋打 => 🐔✈️ 🥚🤜😣🤛
 ```

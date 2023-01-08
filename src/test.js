@@ -1,4 +1,8 @@
-const axios = require('axios')
+const { autoComplete, translatePlaintext } = require('./api')
+
+const config = {
+    cmdPrefix: '#'
+}
 
 const msgs = {
     unknownPhrase: '词典未收录',
@@ -6,31 +10,48 @@ const msgs = {
 }
 
 async function test() {
-    const request = axios.create({
-        baseURL: 'https://api.jikipedia.com/',
-        timeout: 5000,
-        headers: {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36 Edg/108.0.1462.54',
-            'Origin': 'https://jikipedia.com',
-            'Client': 'web',
-            'Host': 'api.jikipedia.com'
+    const event = {
+        reply: (msg) => {
+            console.log(msg)
         }
-    });
+    }
+    const raw_message = '#emoji 鸡你太美'
 
-    const response = await request.post(
-        '/go/auto_complete',
-        {
-            phrase: '牛校出牛子'
-        }
-    )
+    // 消息符合触发条件
+    const isHit = raw_message.trim().startsWith(config.cmdPrefix)
+
+    // 过滤不触发的消息
+    if (!isHit) {
+        return
+    }
+
+    const isEmoji = raw_message.trim().startsWith(config.cmdPrefix + 'emoji')
+
+    if (isEmoji) {
+        const content = raw_message
+          .replace(new RegExp(`^\\s*${config.cmdPrefix + 'emoji'}`), '')
+          .trim()
+
+        await replyEmoji(event, content)
+    } else {
+        const phrase = raw_message
+          .replace(new RegExp(`^\\s*${config.cmdPrefix}`), '')
+          .trim()
+
+        await replyAutoComplete(event, phrase)
+    }
+}
+
+async function replyAutoComplete(event, phrase) {
+    console.debug(phrase)
+
+    const response = await autoComplete(phrase)
 
     const { data } = response.data
-
-    console.log(JSON.stringify(data))
-
+    plugin.debug(JSON.stringify(data))
     // 无梗
     if (data.length === 0) {
-        console.log(msgs.unknownPhrase)
+        await console.log(msgs.unknownPhrase)
         return
     }
     // process
@@ -38,20 +59,39 @@ async function test() {
         let mainContent = data[0].entities?.[0]?.content
         // 无释义
         if (!mainContent) {
-            console.log(msgs.nullPhrase)
+            mainContent = msgs.nullPhrase
+            if (data.length > 1) {
+                mainContent += '\n\n猜你想问：'
+                mainContent = addRelatedContent(data, mainContent)
+            }
+            await console.log(mainContent)
             return
         }
 
         if (data.length > 1) {
             mainContent += '\n\n相关内容：'
-            // 相关词
-            for (let i = 1; i < data.length; i++) {
-                mainContent += data[i].word + (i === data.length - 1 ? '' : '、')
-            }
+            mainContent = addRelatedContent(data, mainContent)
         }
 
-        console.log(mainContent)
+        await console.log(mainContent)
     }
+}
+
+async function replyEmoji(event, content) {
+    console.debug(content)
+
+    const response = await translatePlaintext(content)
+
+    const { translation } = response.data
+
+    await event.reply(translation, true)
+}
+
+function addRelatedContent(data, mainContent) {
+    for (let i = 1; i < data.length; i++) {
+        mainContent += data[i].word + (i === data.length - 1 ? '' : '、')
+    }
+    return mainContent
 }
 
 test()

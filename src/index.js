@@ -1,5 +1,5 @@
 const { KiviPlugin } = require('@kivibot/core')
-const axios = require('axios')
+const { autoComplete, translatePlaintext } = require('./api')
 
 const { version } = require('../package.json')
 const plugin = new KiviPlugin('Jikipedia', version)
@@ -45,55 +45,69 @@ plugin.onMounted(async bot => {
       return
     }
 
-    const phrase = raw_message
-      .replace(new RegExp(`^\\s*${config.cmdPrefix}`), '')
-      .trim()
+    const isEmoji = raw_message.trim().startsWith(config.cmdPrefix + 'emoji')
 
-    plugin.debug(phrase)
+    // TODO 响应失败处理
+    if (isEmoji) {
+      const content = raw_message
+        .replace(new RegExp(`^\\s*${config.cmdPrefix + 'emoji'}`), '')
+        .trim()
 
-    const request = axios.create({
-      baseURL: 'https://api.jikipedia.com/',
-      timeout: 5000,
-      headers: {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36 Edg/108.0.1462.54',
-        'Origin': 'https://jikipedia.com',
-        'Client': 'web',
-        'Host': 'api.jikipedia.com'
-      }
-    })
+      await replyEmoji(event, content)
+    } else {
+      const phrase = raw_message
+        .replace(new RegExp(`^\\s*${config.cmdPrefix}`), '')
+        .trim()
 
-    const response = await request.post('/go/auto_complete', { phrase })
-
-    const { data } = response.data
-    plugin.debug(JSON.stringify(data))
-    // 无梗
-    if (data.length === 0) {
-      await event.reply(msgs.unknownPhrase, true)
-      return
-    }
-    // process
-    if (data.length >= 1) {
-      let mainContent = data[0].entities?.[0]?.content
-      // 无释义
-      if (!mainContent) {
-        mainContent = msgs.nullPhrase
-        if (data.length > 1) {
-          mainContent += '\n\n猜你想问：'
-          mainContent = addRelatedContent(data, mainContent)
-        }
-        await event.reply(mainContent, true)
-        return
-      }
-
-      if (data.length > 1) {
-        mainContent += '\n\n相关内容：'
-        mainContent = addRelatedContent(data, mainContent)
-      }
-
-      await event.reply(mainContent, true)
+      await replyAutoComplete(event, phrase)
     }
   })
 })
+
+async function replyAutoComplete(event, phrase) {
+  plugin.debug(phrase)
+
+  const response = await autoComplete(phrase)
+
+  const { data } = response.data
+  plugin.debug(JSON.stringify(data))
+  // 无梗
+  if (data.length === 0) {
+    await event.reply(msgs.unknownPhrase, true)
+    return
+  }
+  // process
+  if (data.length >= 1) {
+    let mainContent = data[0].entities?.[0]?.content
+    // 无释义
+    if (!mainContent) {
+      mainContent = msgs.nullPhrase
+      if (data.length > 1) {
+        mainContent += '\n\n猜你想问：'
+        mainContent = addRelatedContent(data, mainContent)
+      }
+      await event.reply(mainContent, true)
+      return
+    }
+
+    if (data.length > 1) {
+      mainContent += '\n\n相关内容：'
+      mainContent = addRelatedContent(data, mainContent)
+    }
+
+    await event.reply(mainContent, true)
+  }
+}
+
+async function replyEmoji(event, content) {
+  plugin.debug(content)
+
+  const response = await translatePlaintext(content)
+
+  const { translation } = response.data
+
+  await event.reply(translation, true)
+}
 
 /**
  * 添加相关词

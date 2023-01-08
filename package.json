@@ -1,6 +1,6 @@
 {
   "name": "kivibot-plugin-jikipedia",
-  "version": "1.0.12",
+  "version": "1.1.1",
   "description": "QQ 机器人框架 KiviBot 的 小鸡词典（梗词典）插件",
   "main": "src/index.js",
   "repository": "KiviBotLab/kivibot-plugin-jikipedia",
@@ -11,7 +11,8 @@
     "test": "node src/test.js"
   },
   "files": [
-    "src/index.js"
+    "src/index.js",
+    "src/api.js"
   ],
   "keywords": [
     "kivibot",
