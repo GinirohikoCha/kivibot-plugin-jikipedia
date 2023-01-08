@@ -76,21 +76,37 @@ plugin.onMounted(async bot => {
       let mainContent = data[0].entities?.[0]?.content
       // 无释义
       if (!mainContent) {
-        await event.reply(msgs.nullPhrase, true)
+        mainContent = msgs.nullPhrase
+        if (data.length > 1) {
+          mainContent += '\n\n猜你想问：'
+          mainContent = addRelatedContent(data, mainContent)
+        }
+        await event.reply(mainContent, true)
         return
       }
 
       if (data.length > 1) {
         mainContent += '\n\n相关内容：'
-        // 相关词
-        for (let i = 1; i < data.length; i++) {
-          mainContent += data[i].word + (i === data.length - 1 ? '' : '、')
-        }
+        mainContent = addRelatedContent(data, mainContent)
       }
 
       await event.reply(mainContent, true)
     }
   })
 })
+
+/**
+ * 添加相关词
+ * @param data
+ * @param mainContent
+ * @return {*}
+ */
+function addRelatedContent(data, mainContent) {
+  mainContent += '\n\n相关内容：'
+  for (let i = 1; i < data.length; i++) {
+    mainContent += data[i].word + (i === data.length - 1 ? '' : '、')
+  }
+  return mainContent
+}
 
 module.exports = { plugin }
