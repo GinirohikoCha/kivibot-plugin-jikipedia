@@ -1,7 +1,7 @@
 # 小鸡词典（梗词典） for KiviBot
 
 [![npm-version](https://img.shields.io/npm/v/kivibot-plugin-jikipedia?color=ffd47a&label=kivibot-plugin-jikipedia&style=flat-square)](https://npm.im/kivibot-plugin-jikipedia)
-[![dm](https://shields.io/npm/dm/kivibot-plugin-jikipedia?color=ffd47a&style=flat-square)](https://npm.im/kivibot-plugin-jikipedia)
+[![dm](https://shields.io/npm/dt/kivibot-plugin-jikipedia?color=ffd47a&style=flat-square)](https://npm.im/kivibot-plugin-jikipedia)
 
 [`KiviBot`](https://github.com/KiviBotLab/KiviBot) 的 [小鸡词典](https://jikipedia.com/) 插件，提供请求抓取相关梗词释义。
 
